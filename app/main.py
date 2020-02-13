@@ -1,78 +1,150 @@
-import json
+"""
+Dubby is the UVic AI's 2020 BattleSnake entry
+"""
 import os
 import random
+import time
 import bottle
+import traceback
+import json
 
-from api import ping_response, start_response, move_response, end_response
+direction = None
 
 @bottle.route('/')
 def index():
-    return '''
-    Battlesnake documentation can be found at
-       <a href="https://docs.battlesnake.io">https://docs.battlesnake.io</a>.
-    '''
+	return "<h1>Dubby</h1>"
 
 @bottle.route('/static/<path:path>')
 def static(path):
-    """
-    Given a path, return the static file located relative
-    to the static folder.
-
-    This can be used to return the snake head URL in an API response.
-    """
-    return bottle.static_file(path, root='static/')
+	return bottle.static_file(path, root='static/')
 
 @bottle.post('/ping')
 def ping():
-    """
-    A keep-alive endpoint used to prevent cloud application platforms,
-    such as Heroku, from sleeping the application instance.
-    """
-    return ping_response()
-
-@bottle.post('/start')
-def start():
-    data = bottle.request.json
-
-    """
-    TODO: If you intend to have a stateful snake AI,
-            initialize your snake state here using the
-            request's data if necessary.
-    """
-    print(json.dumps(data))
-
-    color = "#00FF00"
-
-    return start_response(color)
-
-
-@bottle.post('/move')
-def move():
-    data = bottle.request.json
-
-    """
-    TODO: Using the data from the endpoint request object, your
-            snake AI must choose a direction to move in.
-    """
-    print(json.dumps(data))
-
-    directions = ['up', 'down', 'left', 'right']
-    direction = random.choice(directions)
-    '''"HERE"'''
-    return move_response('up')
-
+    return {}
 
 @bottle.post('/end')
 def end():
-    data = bottle.request.json
+    return {}
 
-    """
-    TODO: If your snake AI was stateful,
-        clean up any stateful objects here.
-    """
-    print(json.dumps(data))
+@bottle.post('/start')
+def start():
+    headUrl = '%s://%s/static/head.png' % (
+        bottle.request.urlparts.scheme,
+        bottle.request.urlparts.netloc
+    )
 
-    return end_response()
+    print("\n\n\n\n\n\n")
+
+    return {
+        'color': '#EADA50',
+        'taunt': 'A simple taunt',
+        'head_url': headUrl
+    }
+
+@bottle.post('/move')
+def move(data=None):
+
+    if not data:
+        data = bottle.request.json
+
+    global direction
+
+
+    # Get all the data
+    you = data['you']
+
+    you['body'] = [ (b['x'], b['y']) for b in you['body'] ]
+
+    you['head'] = you['body'][0]
+
+    you['size'] = len(you['body'])
+
+    health = you["health"]
+
+    walls = (data['board']['width'], data['board']['height'])
+
+    food = [(f['x'], f['y']) for f in data['board']['food']]
+    
+    numFood = len(food)
+    
+    print(health)
+
+    #Avoid walls by going clockwise   
+    #Right wall avoidance
+    if you['head'][0] == walls[1]-1:
+        #Bottom right corner avoidance
+        if you['head'][1] == walls[0]-1 and direction == "down":
+            direction = "left"
+            return {
+                'move': "left"
+                }
+        else:
+            direction = "down"
+            return {
+                'move': "down"
+                }
+    
+    #Bottom Wall avoidance
+    elif you['head'][1] == walls[0]-1:
+        #Bottom left corner avoidance
+        if you['head'][0] == 0 and direction == "left":
+            direction = "up"
+            return {
+                'move': "up"
+                }
+        else:
+            direction = "left"
+            return {
+                'move': "left"
+                }
+
+    #Left wall avoidance
+    elif you['head'][0] == 0:
+        #Top left corner avoidance
+        if you['head'][1] == 0 and direction == "up":
+            direction = "right"
+            return {
+                'move': "right"
+                }
+        else:
+            direction = "up"
+            return {
+                'move': "up"
+                }
+
+    #Top wall avoidance
+    elif you['head'][1] == 0:
+        #Top right corner avoidance
+        if you['head'][0] == walls[1]-1 and direction == "right":
+            direction = "down"
+            return {
+                'move': "down"
+                }
+        else:
+            direction = "right"
+            return {
+                'move': "right"
+                }
+    '''
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+    '''
+    print(you['head'])
+    print(walls)
+
+    direction = "right"
+    return {
+        'move': "right",
+        'taunt': 'A simple taunt'
+    }
+
+
+
+
 
 # Expose WSGI app (so gunicorn can find it)
 application = bottle.default_app()
@@ -82,5 +154,4 @@ if __name__ == '__main__':
         application,
         host=os.getenv('IP', '0.0.0.0'),
         port=os.getenv('PORT', '8080'),
-        debug=os.getenv('DEBUG', True)
-    )
+        debug = True)
