@@ -92,11 +92,11 @@ def move(data=None):
         del moves[temp[i]]
 
     #removes adjacent wall obstacles
-    if (you["head"][0]-1 < 0):
+    if (you["head"][0]-1 < 1):
         del moves["left"]
     if (you["head"][0]+1 >= data['board']['width']):
         del moves["right"]
-    if (you["head"][1]-1 < 0):
+    if (you["head"][1]-1 < 1):
         del moves["up"]
     if (you["head"][1]+1 >= data['board']['height']):
         del moves["down"]
@@ -138,6 +138,82 @@ def move(data=None):
         'move': "up",
         'taunt': 'GG'
         }
+
+
+
+'''
+    #Avoid walls by going clockwise   
+    #Right wall avoidance
+    if you['head'][0] == walls[1]-1:
+        #Bottom right corner avoidance
+        if you['head'][1] == walls[0]-1 and direction == "down":
+            direction = "left"
+            return {
+                'move': "left"
+                }
+        else:
+            direction = "down"
+            return {
+                'move': "down"
+                }
+    
+    #Bottom Wall avoidance
+    elif you['head'][1] == walls[0]-1:
+        #Bottom left corner avoidance
+        if you['head'][0] == 0 and direction == "left":
+            direction = "up"
+            return {
+                'move': "up"
+                }
+        else:
+            direction = "left"
+            return {
+                'move': "left"
+                }
+
+    #Left wall avoidance
+    elif you['head'][0] == 0:
+        #Top left corner avoidance
+        if you['head'][1] == 0 and direction == "up":
+            direction = "right"
+            return {
+                'move': "right"
+                }
+        else:
+            direction = "up"
+            return {
+                'move': "up"
+                }
+
+    #Top wall avoidance
+    elif you['head'][1] == 0:
+        #Top right corner avoidance
+        if you['head'][0] == walls[1]-1 and direction == "right":
+            direction = "down"
+            return {
+                'move': "down"
+                }
+        else:
+            direction = "right"
+            return {
+                'move': "right"
+                }
+
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+    elif you['head'] == walls[0]:
+        return 'move': "left"
+
+    print(you['head'])
+    print(walls)
+
+    direction = "right"
+'''
+
+
+
 
 
 
