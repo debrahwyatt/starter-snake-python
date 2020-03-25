@@ -207,13 +207,13 @@ def move(data=None):
         if us[0] == 1:
             dangerous_moves.append("left")
 
-        if us[0] == board['width'] - 1:
+        if us[0] == board['width'] - 2:
             dangerous_moves.append("right")
 
         if us[1] == 1:
             dangerous_moves.append("up")
 
-        if us[1] == board['height'] - 1:
+        if us[1] == board['height'] - 2:
             dangerous_moves.append("down")
 
     #Removes duplicates
