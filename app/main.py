@@ -245,6 +245,9 @@ def move(data=None):
     #TO-DO: 
     #       Coiling (utilize space when it's smaller than snake body)
     #       Passive mode
+    #       Online dubby thinks tails are available squares
+    #       Dubby also thinks the top two levels are unavailable
+    #       Also thinks head to head with the same size snake is a good idea
 
     #Trys the prefered move set first
     try:
@@ -326,7 +329,7 @@ def closestFood(you, board, hungry):
     distance_to_food = board['height']*2
     for i in board["food"]:
         #Avoid food along the edges
-        if i['x'] > 1 and i['x'] < board['width'] - 1 and i['y'] > 1 and i['y'] < board['height'] - 1 and hungry == False:
+        if i['x'] > 0 and i['x'] < board['width'] - 1 and i['y'] > 0 and i['y'] < board['height'] - 1 and hungry == False:
             temp = abs(i["x"] - you["head"][0]) + abs(i["y"] - you["head"][1])
             if temp < distance_to_food:
                 #New closest food
@@ -424,11 +427,11 @@ def fill_recursion(all_available, board, position, unexplored = [], explored = [
 
 #takes a position and returns the available adjacent spaces.
 def obstacles(position, moves, board):
-    if (position[0] - 1 < 1):
+    if (position[0] - 1 < 0):
         del moves["left"]
     if (position[0] + 1 >= board['width']):
         del moves["right"]
-    if (position[1] - 1 < 1):
+    if (position[1] - 1 < 0):
         del moves["up"]
     if (position[1] + 1 >= board['height']):
         del moves["down"]
