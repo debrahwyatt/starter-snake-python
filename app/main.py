@@ -156,7 +156,7 @@ def move(data=None):
 
 
 
-    dangerous_moves = []
+    critical_moves = []
     #These can be game ending moves, not on par with adjacent wall tiles
     #Avoid dangerous moves 
     for i in snakes:
@@ -164,27 +164,31 @@ def move(data=None):
             enemy = (i['body'][0]['x'], i['body'][0]['y'])
             
             if enemy == (us[0], us[1] - 2):
-                dangerous_moves.append("up")
+                critical_moves.append("up")
             if enemy == (us[0], us[1] + 2):
-                dangerous_moves.append("down")
+                critical_moves.append("down")
             if enemy == (us[0] - 2, us[1]):
-                dangerous_moves.append("left")
+                critical_moves.append("left")
             if enemy == (us[0] + 2, us[1]):
-                dangerous_moves.append("right")
+                critical_moves.append("right")
 
             if enemy == (us[0] + 1, us[1] + 1):
-                dangerous_moves.append("down")
-                dangerous_moves.append("right")
+                critical_moves.append("down")
+                critical_moves.append("right")
             if enemy == (us[0] - 1, us[1] + 1):
-                dangerous_moves.append("down")
-                dangerous_moves.append("left")
+                critical_moves.append("down")
+                critical_moves.append("left")
             if enemy == (us[0] - 1, us[1] - 1):
-                dangerous_moves.append("left")
-                dangerous_moves.append("up")
+                critical_moves.append("left")
+                critical_moves.append("up")
             if enemy == (us[0] + 1, us[1] - 1):
-                dangerous_moves.append("up")
-                dangerous_moves.append("right")
-    
+                critical_moves.append("up")
+                critical_moves.append("right")
+
+    #Removes duplicates
+    critical_moves = list(set(critical_moves))
+
+    dangerous_moves = []
     #wall adjacent squares are dangerous
     if hungry == False:
         if us[0] == 0:
@@ -231,6 +235,16 @@ def move(data=None):
     for i in dangerous_moves:
         if i in moves.keys():
             riskey_moves.append(i)
+
+    #Critical moves are a last resort
+    crit = []
+    for i in moves.keys():
+        if i in critical_moves:
+            crit.append(i)
+    for i in crit:
+        if i in moves:
+            del moves[i]
+
 
     #Remove moves which are dangerous
     for i in dangerous_moves:
@@ -280,48 +294,58 @@ def move(data=None):
                 'taunt': 'A simple taunt'
                 }
             except:
-                move_t = []
-                move_h = []
-
-                #Crash into tail if possible
-                if (us[0] + 1, us[1]) in tails:
-                    move_t.append("right")
-                if (us[0] - 1, us[1]) in tails:
-                    move_t.append("left")
-                if (us[0], us[1] - 1) in tails:
-                    move_t.append("up")
-                if (us[0], us[1] + 1) in tails:
-                    move_t.append("down")          
-
-                if (us[0] + 1, us[1]) in heads:
-                    move_h.append("right")
-                if (us[0] - 1, us[1]) in heads:
-                    move_h.append("left")
-                if (us[0], us[1] - 1) in heads:
-                    move_h.append("up")
-                if (us[0], us[1] + 1) in heads:
-                    move_h.append("down") 
-
-                if move_t != []:
+                try:
                     random.seed()
-                    rand = random.choice(move_t)
+                    rand = random.choice(crit)
+                    #print("risky", rand)
                     return {
                     'move': rand,
                     'taunt': 'A simple taunt'
                     }
+                except:
+                    move_t = []
+                    move_h = []
 
-                if move_h != []:
-                    random.seed()
-                    rand = random.choice(move_h)
-                    return {
-                    'move': rand,
-                    'taunt': 'A simple taunt'
+                    #Crash into tail if possible
+                    if (us[0] + 1, us[1]) in tails:
+                        move_t.append("right")
+                    if (us[0] - 1, us[1]) in tails:
+                        move_t.append("left")
+                    if (us[0], us[1] - 1) in tails:
+                        move_t.append("up")
+                    if (us[0], us[1] + 1) in tails:
+                        move_t.append("down")          
+
+                    #otherwise crash into head
+                    if (us[0] + 1, us[1]) in heads:
+                        move_h.append("right")
+                    if (us[0] - 1, us[1]) in heads:
+                        move_h.append("left")
+                    if (us[0], us[1] - 1) in heads:
+                        move_h.append("up")
+                    if (us[0], us[1] + 1) in heads:
+                        move_h.append("down") 
+
+                    if move_t != []:
+                        random.seed()
+                        rand = random.choice(move_t)
+                        return {
+                        'move': rand,
+                        'taunt': 'A simple taunt'
+                        }
+
+                    if move_h != []:
+                        random.seed()
+                        rand = random.choice(move_h)
+                        return {
+                        'move': rand,
+                        'taunt': 'A simple taunt'
+                        }
+
+                    return{
+                    'move': "up",
+                    'taunt': 'GG'
                     }
-
-                return{
-                'move': "up",
-                'taunt': 'GG'
-                }
 
 #find the closest food
 def closestFood(you, board, hungry):
