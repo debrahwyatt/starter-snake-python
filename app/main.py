@@ -157,7 +157,7 @@ def move(data=None):
 
 
     dangerous_moves = []
-
+    #These can be game ending moves, not on par with adjacent wall tiles
     #Avoid dangerous moves 
     for i in snakes:
         if i["name"] in bigger_snakes:
@@ -187,7 +187,7 @@ def move(data=None):
     
     #wall adjacent squares are dangerous
     if hungry == False:
-        if us[0] == 1:
+        if us[0] == 0:
             dangerous_moves.append("up")
             dangerous_moves.append("down")
 
@@ -195,7 +195,7 @@ def move(data=None):
             dangerous_moves.append("up")
             dangerous_moves.append("down")
 
-        if us[1] == 1:
+        if us[1] == 0:
             dangerous_moves.append("left")
             dangerous_moves.append("right")
 
@@ -204,16 +204,16 @@ def move(data=None):
             dangerous_moves.append("right")
 
 
-        if us[0] == 2:
+        if us[0] == 1:
             dangerous_moves.append("left")
 
-        if us[0] == board['width'] - 2:
+        if us[0] == board['width'] - 1:
             dangerous_moves.append("right")
 
-        if us[1] == 2:
+        if us[1] == 1:
             dangerous_moves.append("up")
 
-        if us[1] == board['height'] - 2:
+        if us[1] == board['height'] - 1:
             dangerous_moves.append("down")
 
     #Removes duplicates
