@@ -95,7 +95,7 @@ def move(data=None):
 
 
     #Fill algorithm eliminates common dead ends
-    moves = fill(you["head"], moves, data["board"])
+    moves = fill(you["head"], moves, data["board"], you["size"])
 
 
     #Find and eat food
@@ -381,7 +381,7 @@ def closestFood(you, board, hungry):
 # directions where space is smaller than the snake.
 # Takes the snakes initial position, moves, and board data,
 # returns the available moves
-def fill(position, moves, board):
+def fill(position, moves, board, size):
     
     #Generates the nodes for fill
     all_available = []
@@ -401,16 +401,10 @@ def fill(position, moves, board):
     for m in moves:
         temp[m] = len(fill_recursion(all_available, board, moves[m], [], []))
 
-    #find the largest area
-    longest = 0
     directions = []
+    #Append area's which are larger than us.
     for i in temp:
-        if temp[i] >= longest:
-            longest = temp[i]
-
-    #combine results which utilize the largest area
-    for i in temp:
-        if temp[i] == longest:
+        if temp[i] >= size:
             directions.append(i)
 
     #Deletes moves where area is small
