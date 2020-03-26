@@ -262,8 +262,6 @@ def move(data=None):
 
     #Critical moves are a last resort
 
-    print("HERE")
-    print(data)
 
     
 
@@ -387,8 +385,8 @@ def fill(position, moves, board):
     
     #Generates the nodes for fill
     all_available = []
-    for i in range(1, board["height"]):
-        for j in range(1, board["width"]):
+    for i in range(0, board["height"]):
+        for j in range(0, board["width"]):
             all_available.append((i,j))
 
     #removes obstacles for fill
