@@ -195,7 +195,7 @@ def move(data=None):
             dangerous_moves.append("up")
             dangerous_moves.append("down")
 
-        if us[0] == board['width'] :
+        if us[0] == board['width']:
             dangerous_moves.append("up")
             dangerous_moves.append("down")
 
@@ -223,6 +223,33 @@ def move(data=None):
     #Removes duplicates
     dangerous_moves = list(set(dangerous_moves))
 
+    #remove critical from everything
+    crit = []
+    for i in moves.keys():
+        if i in critical_moves:
+            crit.append(i)
+    for i in crit:
+        if i in moves:
+            del moves[i]
+    for i in crit:
+        if i in prefered_moves:
+            del prefered_moves[prefered_moves.index(i)]
+    for i in crit:
+        if i in dangerous_moves:
+            del dangerous_moves[dangerous_moves.index(i)]
+
+    #remove dangerous from everything
+    riskey_moves = []
+    for i in dangerous_moves:
+        if i in moves.keys():
+            riskey_moves.append(i)
+    for i in riskey_moves:
+        if i in moves:
+            del moves[i]
+    for i in riskey_moves:
+        if i in prefered_moves:
+            del prefered_moves[prefered_moves.index(i)]
+                    
     #merges prefered moves with all moves
     temp = []
     for i in moves.keys():
@@ -231,19 +258,10 @@ def move(data=None):
     prefered_moves = temp
 
     #Risky moves that are viable
-    riskey_moves = []
-    for i in dangerous_moves:
-        if i in moves.keys():
-            riskey_moves.append(i)
+
 
     #Critical moves are a last resort
-    crit = []
-    for i in moves.keys():
-        if i in critical_moves:
-            crit.append(i)
-    for i in crit:
-        if i in moves:
-            del moves[i]
+
 
 
     #Remove moves which are dangerous
@@ -260,7 +278,6 @@ def move(data=None):
     #       Coiling (utilize space when it's smaller than snake body)
     #       Passive mode
     #       Online dubby thinks tails are available squares
-    #       Dubby also thinks the top two levels are unavailable
     #       Also thinks head to head with the same size snake is a good idea
 
     #Trys the prefered move set first
