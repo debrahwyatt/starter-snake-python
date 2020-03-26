@@ -262,14 +262,9 @@ def move(data=None):
 
     #Critical moves are a last resort
 
+    print("HERE")
+    print(data)
 
-
-    #Remove moves which are dangerous
-    for i in dangerous_moves:
-        if i in moves:
-            del moves[i]
-        if i in prefered_moves:
-            del prefered_moves[prefered_moves.index(i)]
     
 
     if health == 1:
